@@ -1,0 +1,3 @@
+2x2 time: 0 s
+3x3 time: 0.021 s
+4x4 time: 27.85 s

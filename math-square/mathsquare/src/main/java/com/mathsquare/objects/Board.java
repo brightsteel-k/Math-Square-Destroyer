@@ -62,8 +62,16 @@ public class Board {
         return targetRows;
     }
 
+    public int getRowTarget(byte row) {
+        return targetRows[row];
+    }
+
     public int[] getTargetColumns() {
         return targetColumns;
+    }
+
+    public int getColumnTarget(byte column) {
+        return targetColumns[column];
     }
 
     public int getBoardLength() {

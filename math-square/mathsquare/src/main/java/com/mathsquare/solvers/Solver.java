@@ -1,10 +1,10 @@
-package com.mathsquare.calculators;
+package com.mathsquare.solvers;
 
 import com.mathsquare.Operation;
 import com.mathsquare.objects.Board;
 import com.mathsquare.ui.DisplayBoard;
 
-public abstract class Calculator {
+public abstract class Solver {
     public static boolean IS_SOLVING = false;
 
     protected int width;
@@ -18,7 +18,7 @@ public abstract class Calculator {
     protected Board board;
     protected DisplayBoard displayBoard;
 
-    public Calculator(int width, int height, Operation[][] operationRows, Operation[][] operationColumns, int[] targetRows, int[] targetColumns, DisplayBoard displayBoard) {
+    public Solver(int width, int height, Operation[][] operationRows, Operation[][] operationColumns, int[] targetRows, int[] targetColumns, DisplayBoard displayBoard) {
         this.width = width;
         this.height = height;
         this.boardlength = width * height;
@@ -30,7 +30,7 @@ public abstract class Calculator {
         this.board = new Board(width, height, operationRows, operationColumns, targetRows, targetColumns);
     }
 
-    public Calculator(Board board, DisplayBoard displayBoard) {
+    public Solver(Board board, DisplayBoard displayBoard) {
         this.width = board.getWidth();
         this.height = board.getHeight();
         this.boardlength = width * height;

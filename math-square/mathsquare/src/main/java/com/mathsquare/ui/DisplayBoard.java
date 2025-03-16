@@ -20,7 +20,7 @@ public abstract class DisplayBoard {
         return this.board;
     }
 
-    public abstract void onSolved(List<Integer> solution);
+    public abstract void onSolved(List<Byte> solution);
 
-    public abstract void updateNumbers(List<Integer> numbers);
+    public abstract void updateNumbers(List<Byte> numbers);
 }

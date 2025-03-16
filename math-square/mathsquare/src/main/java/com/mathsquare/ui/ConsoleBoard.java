@@ -16,7 +16,7 @@ public class ConsoleBoard extends DisplayBoard {
     }
 
     @Override
-    public void onSolved(List<Integer> solution) {
+    public void onSolved(List<Byte> solution) {
         long duration = timer.stopTimer();
         if (solution.size() > 0) {
             System.out.println("SOLUTION FOUND: ");
@@ -39,12 +39,12 @@ public class ConsoleBoard extends DisplayBoard {
         System.out.println("\n" + printTime(duration));
     }
 
-    private String formatSolvedNumberRow(String row, List<Integer> rowNumbers, int digits) {
+    private String formatSolvedNumberRow(String row, List<Byte> rowNumbers, int digits) {
         StringBuilder newRow = new StringBuilder(row);
         int index = newRow.indexOf("#");
         int i = 0;
         while (index > -1) {
-            Integer x = rowNumbers.get(i++);
+            Byte x = rowNumbers.get(i++);
             newRow.replace(index, index + 1, x.toString());
             for (int xDigits = (int)Math.log10(x); xDigits < digits; xDigits++) {
                 newRow.insert(index + 1, " ");
@@ -104,7 +104,7 @@ public class ConsoleBoard extends DisplayBoard {
     }
 
     @Override
-    public void updateNumbers(List<Integer> numbers) {
+    public void updateNumbers(List<Byte> numbers) {
         StringBuilder update = new StringBuilder("CHECKING NUMBERS: [ ");
         for (int i = 0; i < numbers.size(); i++) {
             update.append(numbers.get(i));

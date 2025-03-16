@@ -11,7 +11,7 @@ public class NaturalCalculator extends Calculator {
         super(boardIn);
     }
     
-    public boolean isRowValid(List<Integer> boardNumbers, byte y) {
+    public boolean isRowValid(List<Byte> boardNumbers, byte y) {
         float product = 0;
 
         // Calculate current product for row
@@ -49,7 +49,7 @@ public class NaturalCalculator extends Calculator {
         return Math.round(product) == board.getRowTarget(y);
     }
 
-    public boolean isColumnValid(List<Integer> boardNumbers, byte x) {
+    public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
         float product = 0;
 
         // Calculate current product for column

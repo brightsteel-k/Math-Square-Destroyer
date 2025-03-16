@@ -15,10 +15,10 @@ public class BacktrackSolver extends Solver {
     protected int tick = 0;
     protected int ticksPerUpdate = 100000;
 
-    protected List<Integer> boardNumbers;
-    protected LinkedList<List<Integer>> boardsToTest;
-    protected List<Integer> options;
-    protected LinkedList<List<Integer>> optionsToTest;
+    protected List<Byte> boardNumbers;
+    protected LinkedList<List<Byte>> boardsToTest;
+    protected List<Byte> options;
+    protected LinkedList<List<Byte>> optionsToTest;
     protected Calculator calculator;
 
     protected boolean breadthFirst;
@@ -44,8 +44,8 @@ public class BacktrackSolver extends Solver {
     @Override
     public void beginSolving() {
         IS_SOLVING = true;
-        List<Integer> possibleNumbers = new ArrayList<>();
-        for (int k = 1; k <= boardlength; k++) {
+        List<Byte> possibleNumbers = new ArrayList<>();
+        for (byte k = 1; k <= boardlength; k++) {
             possibleNumbers.add(k);
         }
 
@@ -91,14 +91,14 @@ public class BacktrackSolver extends Solver {
             return true;
         } else {
             // Calculate new boards
-            List<Integer> currentBoard;
+            List<Byte> currentBoard;
             for (int i = 0; i < options.size(); i++) {
                 currentBoard = new ArrayList<>(boardNumbers);
                 currentBoard.add(options.get(i));
 
                 if (isBoardValid(currentBoard, currentBoard.size() - 1)) {
                     boardsToTest.addFirst(currentBoard);
-                    List<Integer> opts = new ArrayList<>(options);
+                    List<Byte> opts = new ArrayList<>(options);
                     opts.remove(options.get(i));
                     optionsToTest.addFirst(opts);
                 }
@@ -121,14 +121,14 @@ public class BacktrackSolver extends Solver {
             return true;
         } else {
             // Calculate new boards
-            List<Integer> currentBoard;
+            List<Byte> currentBoard;
             for (int i = 0; i < options.size(); i++) {
                 currentBoard = new ArrayList<>(boardNumbers);
                 currentBoard.add(options.get(i));
 
                 if (isBoardValid(currentBoard, currentBoard.size() - 1)) {
                     boardsToTest.add(currentBoard);
-                    List<Integer> opts = new ArrayList<>(options);
+                    List<Byte> opts = new ArrayList<>(options);
                     opts.remove(options.get(i));
                     optionsToTest.add(opts);
                 }
@@ -146,11 +146,11 @@ public class BacktrackSolver extends Solver {
         }
     }
 
-    private boolean isBoardSolved(List<Integer> boardNumbers) {
+    private boolean isBoardSolved(List<Byte> boardNumbers) {
         return boardNumbers.size() == boardlength;
     }
 
-    private boolean isBoardValid(List<Integer> boardNumbers, int n) {
+    private boolean isBoardValid(List<Byte> boardNumbers, int n) {
         if (n < width - 1) {
             return true;
         }

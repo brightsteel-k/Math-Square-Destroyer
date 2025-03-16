@@ -14,7 +14,7 @@ public class DmasCalculator extends Calculator {
         operands = new float[Math.max(board.getWidth(), board.getHeight())];
     }
     
-    public boolean isRowValid(List<Integer> boardNumbers, byte y) {
+    public boolean isRowValid(List<Byte> boardNumbers, byte y) {
         
         // Iterate over the row once to apply mul/div operators
         byte chainhead = -1;
@@ -96,7 +96,7 @@ public class DmasCalculator extends Calculator {
         return Math.round(product) == board.getRowTarget(y);
     }
 
-    public boolean isColumnValid(List<Integer> boardNumbers, byte x) {
+    public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
         // Iterate over the column once to apply mul/div operators
         byte chainhead = -1;
         for (byte y = 0; y < board.getHeight(); y++) {

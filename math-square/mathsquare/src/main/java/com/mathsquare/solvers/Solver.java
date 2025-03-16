@@ -7,9 +7,9 @@ import com.mathsquare.ui.DisplayBoard;
 public abstract class Solver {
     public static boolean IS_SOLVING = false;
 
-    protected int width;
-    protected int height;
-    protected int boardlength;
+    protected byte width;
+    protected byte height;
+    protected byte boardlength;
     protected Operation[][] operationRows;
     protected Operation[][] operationColumns;
     protected int[] targetRows;
@@ -19,9 +19,9 @@ public abstract class Solver {
     protected DisplayBoard displayBoard;
 
     public Solver(int width, int height, Operation[][] operationRows, Operation[][] operationColumns, int[] targetRows, int[] targetColumns, DisplayBoard displayBoard) {
-        this.width = width;
-        this.height = height;
-        this.boardlength = width * height;
+        this.width = (byte)width;
+        this.height = (byte)height;
+        this.boardlength = (byte)(width * height);
         this.operationRows = operationRows;
         this.operationColumns = operationColumns;
         this.targetRows = targetRows;
@@ -33,7 +33,7 @@ public abstract class Solver {
     public Solver(Board board, DisplayBoard displayBoard) {
         this.width = board.getWidth();
         this.height = board.getHeight();
-        this.boardlength = width * height;
+        this.boardlength = (byte)(width * height);
         this.operationRows = board.getOperationRows();
         this.operationColumns = board.getOperationColumns();
         this.targetRows = board.getTargetRows();

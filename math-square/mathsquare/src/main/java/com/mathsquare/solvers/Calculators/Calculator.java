@@ -13,9 +13,9 @@ public abstract class Calculator {
         board = boardIn;
     }
 
-    public abstract boolean isRowValid(List<Integer> boardNumbers, byte y);
+    public abstract boolean isRowValid(List<Byte> boardNumbers, byte y);
 
-    public abstract boolean isColumnValid(List<Integer> boardNumbers, byte x);
+    public abstract boolean isColumnValid(List<Byte> boardNumbers, byte x);
 
     /**
      * Returns the number at a particular column and row in the given board numbers, or
@@ -23,9 +23,10 @@ public abstract class Calculator {
      * @param boardNumbers Current board numbers.
      * @param x Column.
      * @param y Row.
-     * @return The number on the board.
+     * @return The number on the board. Valid values are limited to range [0,boardlength],
+     *          which must be a byte.
      */
-    protected int getBoardNumber(List<Integer> boardNumbers, byte x, byte y) {
+    protected byte getBoardNumber(List<Byte> boardNumbers, byte x, byte y) {
         int index = x + (y * board.getWidth());
         if (index < boardNumbers.size()) {
             return boardNumbers.get(index);

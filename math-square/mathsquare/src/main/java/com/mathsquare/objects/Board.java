@@ -6,9 +6,9 @@ import com.google.gson.annotations.Expose;
 import com.mathsquare.Operation;
 public class Board {
     @Expose
-    private int width;
+    private byte width;
     @Expose
-    private int height;
+    private byte height;
     @Expose
     private String[] pattern;
     private Operation[][] operationRows = new Operation[][] { };
@@ -21,8 +21,8 @@ public class Board {
     }
 
     public Board(int width, int height, Operation[][] operationRows, Operation[][] operationColumns, int[] targetRows, int[] targetColumns) {
-        this.width = width;
-        this.height = height;
+        this.width = (byte)width;
+        this.height = (byte)height;
         this.operationRows = operationRows;
         this.operationColumns = operationColumns;
         this.targetRows = targetRows;
@@ -42,11 +42,11 @@ public class Board {
         return pattern;
     }
 
-    public int getWidth() {
+    public byte getWidth() {
         return width;
     }
     
-    public int getHeight() {
+    public byte getHeight() {
         return height;
     }
 

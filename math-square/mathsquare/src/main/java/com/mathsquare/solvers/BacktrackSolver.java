@@ -10,7 +10,7 @@ import com.mathsquare.solvers.Calculators.DmasCalculator;
 import com.mathsquare.solvers.Calculators.NaturalCalculator;
 import com.mathsquare.ui.DisplayBoard;
 
-public class BacktrackSolver extends Solver {
+public abstract class BacktrackSolver extends Solver {
 
     protected int tick = 0;
     protected int ticksPerUpdate = 100000;
@@ -21,23 +21,23 @@ public class BacktrackSolver extends Solver {
     protected LinkedList<List<Byte>> optionsToTest;
     protected Calculator calculator;
 
-    protected boolean breadthFirst;
+    protected boolean useOrderOfOperations;
 
     public BacktrackSolver(Board board, DisplayBoard displayBoard) {
-        this(board, displayBoard, false, false);
+        this(board, displayBoard, false);
     }
 
-    public BacktrackSolver(Board board, DisplayBoard displayBoard, boolean breadthFirst) {
-        this(board, displayBoard, breadthFirst, false);
-    }
-
-    public BacktrackSolver(Board board, DisplayBoard displayBoard, boolean breadthFirst, boolean useOrderOfOperations) {
+    public BacktrackSolver(Board board, DisplayBoard displayBoard, boolean useOrderOfOperations) {
         super(board, displayBoard);
-        this.breadthFirst = breadthFirst;
+        this.useOrderOfOperations = useOrderOfOperations;
+        calculator = initializeCalculator();
+    }
+
+    public Calculator initializeCalculator() {
         if (useOrderOfOperations) {
-            calculator = new DmasCalculator(board);
+            return new DmasCalculator(board);
         } else {
-            calculator = new NaturalCalculator(board);
+            return new NaturalCalculator(board);
         }
     }
     
@@ -52,105 +52,14 @@ public class BacktrackSolver extends Solver {
         this.boardNumbers = new ArrayList<>();
         this.boardsToTest = new LinkedList<>();
         this.options = possibleNumbers;
-        this.optionsToTest = new LinkedList<>();
-
-        if (breadthFirst) {
-            beginSolvingBreadthFirst();
-        } else {
-            beginSolvingDepthFirst();
-        }
-        
+        this.optionsToTest = new LinkedList<>();        
     }
 
-    public void beginSolvingDepthFirst() {
-        while (IS_SOLVING) {
-            if (solveBoardDepthFirst()) {
-                IS_SOLVING = false;
-                displayBoard.onSolved(boardNumbers);
-            } else if (++tick == ticksPerUpdate) {
-                displayBoard.updateNumbers(boardNumbers);
-                tick = 0;
-            }
-        }
-    }
-
-    public void beginSolvingBreadthFirst() {
-        while (IS_SOLVING) {
-            if (solveBoardBreadthFirst()) {
-                IS_SOLVING = false;
-                displayBoard.onSolved(boardNumbers);
-            } else if (++tick == ticksPerUpdate) {
-                displayBoard.updateNumbers(boardNumbers);
-                tick = 0;
-            }
-        }
-    }
-
-    private boolean solveBoardDepthFirst() {
-        if (isBoardSolved(boardNumbers)) {
-            return true;
-        } else {
-            // Calculate new boards
-            List<Byte> currentBoard;
-            for (int i = 0; i < options.size(); i++) {
-                currentBoard = new ArrayList<>(boardNumbers);
-                currentBoard.add(options.get(i));
-
-                if (isBoardValid(currentBoard, currentBoard.size() - 1)) {
-                    boardsToTest.addFirst(currentBoard);
-                    List<Byte> opts = new ArrayList<>(options);
-                    opts.remove(options.get(i));
-                    optionsToTest.addFirst(opts);
-                }
-            }
-
-            // Solve next board, if there is one
-            if (boardsToTest.size() == 0) {
-                boardNumbers = new ArrayList<>();
-                return true;
-            } else {
-                boardNumbers = boardsToTest.poll();
-                options = optionsToTest.poll();
-                return false;
-            }
-        }
-    }
-
-    private boolean solveBoardBreadthFirst() {
-        if (isBoardSolved(boardNumbers)) {
-            return true;
-        } else {
-            // Calculate new boards
-            List<Byte> currentBoard;
-            for (int i = 0; i < options.size(); i++) {
-                currentBoard = new ArrayList<>(boardNumbers);
-                currentBoard.add(options.get(i));
-
-                if (isBoardValid(currentBoard, currentBoard.size() - 1)) {
-                    boardsToTest.add(currentBoard);
-                    List<Byte> opts = new ArrayList<>(options);
-                    opts.remove(options.get(i));
-                    optionsToTest.add(opts);
-                }
-            }
-
-            // Solve next board, if there is one
-            if (boardsToTest.size() == 0) {
-                boardNumbers = new ArrayList<>();
-                return true;
-            } else {
-                boardNumbers = boardsToTest.poll();
-                options = optionsToTest.poll();
-                return false;
-            }
-        }
-    }
-
-    private boolean isBoardSolved(List<Byte> boardNumbers) {
+    protected boolean isBoardSolved(List<Byte> boardNumbers) {
         return boardNumbers.size() == boardlength;
     }
 
-    private boolean isBoardValid(List<Byte> boardNumbers, int n) {
+    protected boolean isBoardValid(List<Byte> boardNumbers, int n) {
         if (n < width - 1) {
             return true;
         }
@@ -160,13 +69,5 @@ public class BacktrackSolver extends Solver {
 
         // Check row and column
         return calculator.isRowValid(boardNumbers, (byte)row) && calculator.isColumnValid(boardNumbers, (byte)column);
-    }
-
-    public void setDepthFirst() {
-        breadthFirst = false;
-    }
-
-    public void setBreadthFirst() {
-        breadthFirst = true;
     }
 }

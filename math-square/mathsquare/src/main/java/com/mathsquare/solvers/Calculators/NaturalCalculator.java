@@ -12,15 +12,15 @@ public class NaturalCalculator extends Calculator {
     }
     
     public boolean isRowValid(List<Byte> boardNumbers, byte y) {
-        float product = 0;
+        // Unfinished rows automatically pass validation 
+        if (!isRowFinished(boardNumbers, y)) {
+            return true;
+        }
 
         // Calculate current product for row
+        float product = 0;
         for (byte x = 0; x < board.getWidth(); x++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
-            if (nextNum == -1) {
-                // Return true for an unfinished row
-                return true;
-            }
 
             // If this is the first operand, initialize product
             if (x == 0) {
@@ -50,15 +50,15 @@ public class NaturalCalculator extends Calculator {
     }
 
     public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
-        float product = 0;
+        // Unfinished columns automatically pass validation
+        if (!isColumnFinished(boardNumbers, x)) {
+            return true;
+        }
 
         // Calculate current product for column
+        float product = 0;
         for (byte y = 0; y < board.getHeight(); y++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
-            if (nextNum == -1) {
-                // Return true for an unfinished column
-                return true;
-            }
 
             // If this is the first operand, initialize product
             if (y == 0) {

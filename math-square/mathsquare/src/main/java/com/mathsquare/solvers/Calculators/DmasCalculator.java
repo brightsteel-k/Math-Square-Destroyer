@@ -15,15 +15,15 @@ public class DmasCalculator extends Calculator {
     }
     
     public boolean isRowValid(List<Byte> boardNumbers, byte y) {
-        
+        // Unfinished rows automatically pass validation 
+        if (!isRowFinished(boardNumbers, y)) {
+            return true;
+        }
+
         // Iterate over the row once to apply mul/div operators
         byte chainhead = -1;
         for (byte x = 0; x < board.getWidth(); x++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
-            if (nextNum == -1) {
-                // Return true for an unfinished row
-                return true;
-            }
 
             // If this is the first operand, load it immediately
             if (x == 0) {
@@ -97,14 +97,15 @@ public class DmasCalculator extends Calculator {
     }
 
     public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
+        // Unfinished columns automatically pass validation 
+        if (!isColumnFinished(boardNumbers, x)) {
+            return true;
+        }
+
         // Iterate over the column once to apply mul/div operators
         byte chainhead = -1;
         for (byte y = 0; y < board.getHeight(); y++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
-            if (nextNum == -1) {
-                // Return true for an unfinished column
-                return true;
-            }
 
             // If this is the first operand, load it immediately
             if (y == 0) {

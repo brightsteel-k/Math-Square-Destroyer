@@ -2,7 +2,10 @@ package com.mathsquare.solvers;
 
 import com.mathsquare.Operation;
 import com.mathsquare.objects.Board;
+import com.mathsquare.solvers.Calculators.Calculator;
 import com.mathsquare.ui.DisplayBoard;
+
+import java.util.List;
 
 public abstract class Solver {
     public static boolean IS_SOLVING = false;
@@ -18,19 +21,11 @@ public abstract class Solver {
     protected Board board;
     protected DisplayBoard displayBoard;
 
-    public Solver(int width, int height, Operation[][] operationRows, Operation[][] operationColumns, int[] targetRows, int[] targetColumns, DisplayBoard displayBoard) {
-        this.width = (byte)width;
-        this.height = (byte)height;
-        this.boardlength = (byte)(width * height);
-        this.operationRows = operationRows;
-        this.operationColumns = operationColumns;
-        this.targetRows = targetRows;
-        this.targetColumns = targetColumns;
+    public Solver(DisplayBoard displayBoard) {
         this.displayBoard = displayBoard;
-        this.board = new Board(width, height, operationRows, operationColumns, targetRows, targetColumns);
     }
 
-    public Solver(Board board, DisplayBoard displayBoard) {
+    public void loadBoard(Board board) {
         this.width = board.getWidth();
         this.height = board.getHeight();
         this.boardlength = (byte)(width * height);
@@ -38,9 +33,13 @@ public abstract class Solver {
         this.operationColumns = board.getOperationColumns();
         this.targetRows = board.getTargetRows();
         this.targetColumns = board.getTargetColumns();
-        this.displayBoard = displayBoard;
         this.board = board;
     }
 
-    public abstract void beginSolving();
+    public abstract List<Byte> solveBoard();
+
+    public abstract List<Byte> getBoardNumbers();
+
+    public DisplayBoard getDisplayBoard() { return displayBoard; }
+    public abstract Calculator getCalculator();
 }

@@ -1,21 +1,49 @@
 package com.mathsquare.solvers.Calculators;
 
-import java.util.List;
-
+import com.mathsquare.Operation;
 import com.mathsquare.objects.Board;
+
+import java.util.List;
 
 public abstract class Calculator {
 
     protected static final byte ZERO = (byte)0;
+    protected float errorThreshold = 0.00001f;
     protected Board board;
 
+    public Calculator() { loadBoard(Board.EMPTY_BOARD);}
+
     public Calculator(Board boardIn) {
-        board = boardIn;
+        loadBoard(boardIn);
     }
+
+    public void loadBoard(Board boardIn) { board = boardIn; }
 
     public abstract boolean isRowValid(List<Byte> boardNumbers, byte y);
 
     public abstract boolean isColumnValid(List<Byte> boardNumbers, byte x);
+
+    /**
+     * Calculates the result of an equation given by n lineNumbers separated by n - 1 operations.
+     * @param lineNumbers The numbers of the equation.
+     * @param operations The operations between each number. Should be one fewer than the numbers.
+     * @return the result of the equation, or Integer.MIN_VALUE if the result is not a clean integer.
+     */
+    public abstract int calculateLine(List<Byte> lineNumbers, Operation[] operations);
+
+    /**
+     * Checks whether the change to slot n on the board makes the board invalid.
+     * @param boardNumbers Current board numbers.
+     * @param n Slot changed.
+     * @return true if the board is valid, false otherwise.
+     */
+    public boolean isBoardChangeValid(List<Byte> boardNumbers, byte n) {
+        int row = n / board.getWidth();
+        int column = n % board.getWidth();
+
+        // Check row and column
+        return isRowValid(boardNumbers, (byte)row) && isColumnValid(boardNumbers, (byte)column);
+    }
 
     /**
      * Checks whether the given row is complete.
@@ -65,5 +93,16 @@ public abstract class Calculator {
      */
     protected byte prev(byte x) {
         return (byte)(x - 1);
+    }
+
+    /**
+     * Checks whether the given float is within a certain threshold of the target int.
+     * @param value Value to check the validity of.
+     * @param target Target int to validate against.
+     * @return True iff value is approximately equal to target.
+     */
+    protected boolean matches(float value, int target) {
+        float error = value - (float)target;
+        return error >= 0 ? error < errorThreshold : error * -1 < errorThreshold;
     }
 }

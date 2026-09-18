@@ -1,45 +1,64 @@
 package com.mathsquare.ui;
 
-import java.util.List;
-
 import com.mathsquare.objects.Board;
 import com.mathsquare.util.Timer;
+
+import java.util.List;
 
 
 public class ConsoleBoard extends DisplayBoard {
 
     private Timer timer = new Timer();
+    private long duration = 0;
 
-    public ConsoleBoard(Board board) {
-        super(board);
+    public ConsoleBoard() {
+        super();
+    }
+
+    @Override
+    public void loadBoard(Board board) {
+        super.loadBoard(board);
         timer.startTimer();
     }
 
     @Override
     public void onSolved(List<Byte> solution) {
-        long duration = timer.stopTimer();
-        if (solution.size() > 0) {
-            System.out.println("SOLUTION FOUND: ");
+        duration = timer.stopTimer();
+        System.out.println(getSolutionDisplay(solution));
+    }
+
+    public String getSolutionDisplay(List<Byte> solution) {
+        StringBuilder displayString = new StringBuilder();
+        if (!solution.isEmpty()) {
+            displayString.append("SOLUTION FOUND: \n");
             String[] pattern = board.getPattern();
+
             int width = board.getWidth();
             int digits = (int)Math.log10(board.getBoardLength());
             for (int i = 0; i < pattern.length; i++) {
                 if (i % 2 == 0 && i < pattern.length - 1) {
-                    System.out.println(formatSolvedNumberRow(pattern[i], solution.subList(i / 2 * width, (i / 2 + 1) * width), digits));
+                    displayString.append(formatSolvedNumberRow(pattern[i], solution.subList(i / 2 * width, (i / 2 + 1) * width), digits));
+                    displayString.append("\n");
                 } else if (i == pattern.length - 1) {
-                    System.out.println(formatTargetsRow(pattern[i], digits));
+                    displayString.append(formatTargetsRow(pattern[i], digits));
+                    displayString.append("\n");
                 } else {
-                    System.out.println(formatSolvedOperationRow(pattern[i], digits));
+                    displayString.append(formatSolvedOperationRow(pattern[i], digits));
+                    displayString.append("\n");
                 }
             }
         } else {
-            System.out.println("Program ended, no solution found.");
+            displayString.append("Program ended, no solution found.\n");
         }
 
-        System.out.println("\n" + printTime(duration));
+        displayString.append("\n");
+        displayString.append(printTime(duration));
+        displayString.append("\n");
+
+        return displayString.toString();
     }
 
-    private String formatSolvedNumberRow(String row, List<Byte> rowNumbers, int digits) {
+    private static String formatSolvedNumberRow(String row, List<Byte> rowNumbers, int digits) {
         StringBuilder newRow = new StringBuilder(row);
         int index = newRow.indexOf("#");
         int i = 0;
@@ -54,7 +73,7 @@ public class ConsoleBoard extends DisplayBoard {
         return newRow.toString();
     }
 
-    private String formatSolvedOperationRow(String row, int extraSpaces) {
+    private static String formatSolvedOperationRow(String row, int extraSpaces) {
         if (extraSpaces == 0) {
             return row;
         }
@@ -70,7 +89,7 @@ public class ConsoleBoard extends DisplayBoard {
         return newRow.toString();
     }
     
-    private String formatTargetsRow(String row, int extraSpaces) {
+    private static String formatTargetsRow(String row, int extraSpaces) {
         if (extraSpaces == 0) {
             return row;
         }
@@ -92,13 +111,13 @@ public class ConsoleBoard extends DisplayBoard {
         return newRow.toString();
     }
 
-    private void addSpaces(StringBuilder string, int count) {
+    private static void addSpaces(StringBuilder string, int count) {
         for (int s = 0; s < count; s++) {
             string.append(" ");
         }
     }
 
-    private String printTime(long duration) {
+    private static String printTime(long duration) {
         String commonTime = duration > 120000l ? String.format("%.2f min", (float)duration / 60000f) : String.format("%.2f sec", (float)duration / 1000f);
         return "TIME: " + duration + " ms / " + commonTime;
     }
@@ -116,5 +135,4 @@ public class ConsoleBoard extends DisplayBoard {
         }
         System.out.println(update.toString());
     }
-    
 }

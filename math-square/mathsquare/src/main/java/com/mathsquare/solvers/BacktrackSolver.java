@@ -1,14 +1,14 @@
 package com.mathsquare.solvers;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import com.mathsquare.objects.Board;
 import com.mathsquare.solvers.Calculators.Calculator;
 import com.mathsquare.solvers.Calculators.DmasCalculator;
 import com.mathsquare.solvers.Calculators.NaturalCalculator;
 import com.mathsquare.ui.DisplayBoard;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public abstract class BacktrackSolver extends Solver {
 
@@ -23,26 +23,34 @@ public abstract class BacktrackSolver extends Solver {
 
     protected boolean useOrderOfOperations;
 
-    public BacktrackSolver(Board board, DisplayBoard displayBoard) {
-        this(board, displayBoard, false);
+    public BacktrackSolver(DisplayBoard displayBoard, boolean useOrderOfOperations) {
+        this(displayBoard, useOrderOfOperations, 100000);
     }
 
-    public BacktrackSolver(Board board, DisplayBoard displayBoard, boolean useOrderOfOperations) {
-        super(board, displayBoard);
+    public BacktrackSolver(DisplayBoard displayBoard, boolean useOrderOfOperations, int ticksPerUpdate) {
+        super(displayBoard);
         this.useOrderOfOperations = useOrderOfOperations;
-        calculator = initializeCalculator();
+        this.ticksPerUpdate = ticksPerUpdate;
+        this.calculator = initializeCalculator();
     }
 
     public Calculator initializeCalculator() {
         if (useOrderOfOperations) {
-            return new DmasCalculator(board);
+            return new DmasCalculator();
         } else {
-            return new NaturalCalculator(board);
+            return new NaturalCalculator();
         }
     }
-    
+
     @Override
-    public void beginSolving() {
+    public void loadBoard(Board board) {
+        super.loadBoard(board);
+        calculator.loadBoard(board);
+        displayBoard.loadBoard(board);
+    }
+
+    @Override
+    public List<Byte> solveBoard() {
         IS_SOLVING = true;
         List<Byte> possibleNumbers = new ArrayList<>();
         for (byte k = 1; k <= boardlength; k++) {
@@ -52,7 +60,8 @@ public abstract class BacktrackSolver extends Solver {
         this.boardNumbers = new ArrayList<>();
         this.boardsToTest = new LinkedList<>();
         this.options = possibleNumbers;
-        this.optionsToTest = new LinkedList<>();        
+        this.optionsToTest = new LinkedList<>();
+        return new ArrayList<>();
     }
 
     protected boolean isBoardSolved(List<Byte> boardNumbers) {
@@ -64,10 +73,17 @@ public abstract class BacktrackSolver extends Solver {
             return true;
         }
 
-        int row = n / width;
-        int column = n % width;
-
-        // Check row and column
-        return calculator.isRowValid(boardNumbers, (byte)row) && calculator.isColumnValid(boardNumbers, (byte)column);
+        return calculator.isBoardChangeValid(boardNumbers, (byte)n);
     }
+
+    @Override
+    public Calculator getCalculator() {
+        return calculator;
+    }
+    
+    @Override
+    public List<Byte> getBoardNumbers() {
+        return boardNumbers;
+    }
+
 }

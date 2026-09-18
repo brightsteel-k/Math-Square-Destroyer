@@ -1,35 +1,36 @@
 package com.mathsquare.solvers;
 
+import com.mathsquare.ui.DisplayBoard;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mathsquare.objects.Board;
-import com.mathsquare.ui.DisplayBoard;
-
 public class DFSBacktrackSolver extends BacktrackSolver {
 
-    public DFSBacktrackSolver(Board board, DisplayBoard displayBoard) {
-        super(board, displayBoard, false);
+    public DFSBacktrackSolver(DisplayBoard displayBoard, boolean useOrderOfOperations) {
+        super(displayBoard, useOrderOfOperations);
     }
 
-    public DFSBacktrackSolver(Board board, DisplayBoard displayBoard, boolean useOrderOfOperations) {
-        super(board, displayBoard, useOrderOfOperations);
+    public DFSBacktrackSolver(DisplayBoard displayBoard, boolean useOrderOfOperations, int ticksPerUpdate) {
+        super(displayBoard, useOrderOfOperations, ticksPerUpdate);
     }
     
     @Override
-    public void beginSolving() {
-        super.beginSolving();
+    public List<Byte> solveBoard() {
+        super.solveBoard();
 
         // Begin Depth-First Search
         while (IS_SOLVING) {
             if (solveBoardDepthFirst()) {
                 IS_SOLVING = false;
                 displayBoard.onSolved(boardNumbers);
+                return boardNumbers;
             } else if (++tick == ticksPerUpdate) {
                 displayBoard.updateNumbers(boardNumbers);
                 tick = 0;
             }
         }
+        return new ArrayList<>();
     }
 
     protected boolean solveBoardDepthFirst() {

@@ -1,18 +1,16 @@
 package com.mathsquare.ui;
 
-import java.util.List;
-
 import com.mathsquare.objects.Board;
+
+import java.util.List;
 
 public abstract class DisplayBoard {
 
     protected Board board;
 
-    public DisplayBoard(Board board) {
-        this.board = board;
-    }
+    public DisplayBoard() {}
 
-    public void setBoard(Board board) {
+    public void loadBoard(Board board) {
         this.board = board;
     }
 

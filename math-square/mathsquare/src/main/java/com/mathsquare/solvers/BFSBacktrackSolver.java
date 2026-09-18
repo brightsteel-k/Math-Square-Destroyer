@@ -1,35 +1,36 @@
 package com.mathsquare.solvers;
 
+import com.mathsquare.ui.DisplayBoard;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mathsquare.objects.Board;
-import com.mathsquare.ui.DisplayBoard;
-
 public class BFSBacktrackSolver extends BacktrackSolver {
 
-    public BFSBacktrackSolver(Board board, DisplayBoard displayBoard) {
-        super(board, displayBoard, false);
+    public BFSBacktrackSolver(DisplayBoard displayBoard, boolean useOrderOfOperations) {
+        super(displayBoard, useOrderOfOperations);
     }
 
-    public BFSBacktrackSolver(Board board, DisplayBoard displayBoard, boolean useOrderOfOperations) {
-        super(board, displayBoard, useOrderOfOperations);
+    public BFSBacktrackSolver(DisplayBoard displayBoard, boolean useOrderOfOperations, int ticksPerUpdate) {
+        super(displayBoard, useOrderOfOperations, ticksPerUpdate);
     }
     
     @Override
-    public void beginSolving() {
-        super.beginSolving();
+    public List<Byte> solveBoard() {
+        super.solveBoard();
 
         // Begin Breadth-First Search
         while (IS_SOLVING) {
             if (solveBoardBreadthFirst()) {
                 IS_SOLVING = false;
                 displayBoard.onSolved(boardNumbers);
+                return boardNumbers;
             } else if (++tick == ticksPerUpdate) {
                 displayBoard.updateNumbers(boardNumbers);
                 tick = 0;
             }
         }
+        return new ArrayList<>();
     }
 
     private boolean solveBoardBreadthFirst() {

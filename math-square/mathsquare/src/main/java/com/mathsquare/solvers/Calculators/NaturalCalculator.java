@@ -1,11 +1,16 @@
 package com.mathsquare.solvers.Calculators;
 
-import java.util.List;
-
+import com.mathsquare.Operation;
 import com.mathsquare.objects.Board;
+
+import java.util.List;
 
 // Calculates rows and columns in the order the operations appear (NO order of operations)
 public class NaturalCalculator extends Calculator {
+
+    public NaturalCalculator() {
+        super();
+    }
 
     public NaturalCalculator(Board boardIn) {
         super(boardIn);
@@ -46,7 +51,7 @@ public class NaturalCalculator extends Calculator {
         }
 
         // Compare calculated value to target value
-        return Math.round(product) == board.getRowTarget(y);
+        return matches(product, board.getRowTarget(y));
     }
 
     public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
@@ -84,6 +89,34 @@ public class NaturalCalculator extends Calculator {
         }
 
         // Compare calculated value to target value
-        return Math.round(product) == board.getColumnTarget(x);
+        return matches(product, board.getColumnTarget(x));
+    }
+
+    @Override
+    public int calculateLine(List<Byte> lineNumbers, Operation[] operations) {
+        // Calculate current product for line
+        float product = lineNumbers.get(0);
+        for (byte i = 1; i < lineNumbers.size(); i++) {
+            float nextNum = lineNumbers.get(i);
+
+            // Otherwise, apply the appropriate operator with the next number
+            switch (operations[i - 1]) {
+                case ADD:
+                    product += nextNum;
+                    break;
+                case SUB:
+                    product -= nextNum;
+                    break;
+                case MUL:
+                    product *= nextNum;
+                    break;
+                case DIV:
+                    product /= nextNum;
+                    break;
+            }
+        }
+
+        int roundedProduct = Math.round(product);
+        return matches(product, roundedProduct) ? roundedProduct : Integer.MIN_VALUE;
     }
 }

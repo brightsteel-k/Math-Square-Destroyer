@@ -1,10 +1,14 @@
 package com.mathsquare.objects;
 
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.mathsquare.Operation;
+
+import java.util.Arrays;
+import java.util.List;
+
 public class Board {
+    public static Board EMPTY_BOARD = new Board();
+
     @Expose
     private byte width;
     @Expose
@@ -39,6 +43,9 @@ public class Board {
     }
 
     public String[] getPattern() {
+        if (!isValidPattern(pattern)) {
+            pattern = generateBoardPattern(this);
+        }
         return pattern;
     }
 
@@ -76,6 +83,68 @@ public class Board {
 
     public int getBoardLength() {
         return width * height;
+    }
+
+    public static boolean isValidPattern(String[] pattern) {
+        return pattern.length > 0 && pattern[0].startsWith("#");
+    }
+
+    public static String[] generateBoardPattern(Board board) {
+        int width = board.getWidth();
+        int height = board.getHeight();
+
+        // Maybe unnecessary?
+        int targetNumLength = Arrays.stream(board.getTargetColumns())
+                .map(Math::abs)
+                .max()
+                .toString()
+                .length() + 1;
+        int patternWidth = width * 3 + 1 + targetNumLength;
+
+        int patternHeight = height * 2 + 1;
+
+        String[] rows = new String[patternHeight];
+        StringBuilder row = new StringBuilder();
+        Operation[] ops;
+        for (int i = 0; i < height * 2; i++) {
+            // Reset current row
+            row.setLength(0);
+
+            if (i % 2 == 0) {
+                // Numbers row
+                ops = board.getOperationRows()[i / 2];
+                for (int x = 0; x < width - 1; x++) { row.append("# "); row.append(ops[x]); row.append(" "); }
+                row.append("#  = ");
+
+                // Row targets
+                row.append(board.getTargetRows()[i / 2]);
+            } else if (i == height * 2 - 1) {
+                // Equals row
+                for (int x = 0; x < width; x++) { row.append("=   "); }
+            } else {
+                // Operations row
+                for (int x = 0; x < width; x++) { row.append(board.getOperationColumns()[x][i / 2]); row.append("   "); }
+            }
+
+            // Add current row
+            rows[i] = row.toString();
+        }
+
+
+        // Column targets
+        row.setLength(0);
+        int totalLength = 0;
+        for (byte x = 0; x < width; x++) {
+            int target = board.getColumnTarget(x);
+            totalLength += Integer.toString(target).length();
+            row.append(target);
+            int numSpaces = Math.max(4 * x + 4 - totalLength, 1);
+            row.append(" ".repeat(numSpaces));
+            totalLength += numSpaces;
+        }
+        rows[patternHeight - 1] = row.toString();
+
+        return rows;
     }
 
     public void debugPrint() {

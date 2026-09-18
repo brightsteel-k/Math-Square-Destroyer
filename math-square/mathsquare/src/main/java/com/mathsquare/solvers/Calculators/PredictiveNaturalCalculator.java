@@ -1,8 +1,8 @@
 package com.mathsquare.solvers.Calculators;
 
-import java.util.List;
-
 import com.mathsquare.objects.Board;
+
+import java.util.List;
 
 // Calculates rows and columns in the order the operations appear (NO order of operations),
 // predicts whether unfinished rows or columns are still possible given the remaining options.
@@ -68,12 +68,22 @@ public class PredictiveNaturalCalculator extends NaturalCalculator implements IP
                     upperBound -= nextNum == -1 ? minOption : nextNum;
                     break;
                 case MUL:
-                    lowerBound *= nextNum == -1 ? minOption : nextNum;
-                    upperBound *= nextNum == -1 ? maxOption : nextNum;
+                    if (nextNum == -1) {
+                        lowerBound *= lowerBound > 0 ? minOption : maxOption;
+                        upperBound *= upperBound > 0 ? maxOption : minOption;
+                    } else {
+                        lowerBound *= nextNum;
+                        upperBound *= nextNum;
+                    }
                     break;
                 case DIV:
-                    lowerBound /= nextNum == -1 ? maxOption : nextNum;
-                    upperBound /= nextNum == -1 ? minOption : nextNum;
+                    if (nextNum == -1) {
+                        lowerBound /= lowerBound > 0 ? maxOption : minOption;
+                        upperBound /= upperBound > 0 ? minOption : maxOption;
+                    } else {
+                        lowerBound /= nextNum;
+                        upperBound /= nextNum;
+                    }
                     break;
             }
         }

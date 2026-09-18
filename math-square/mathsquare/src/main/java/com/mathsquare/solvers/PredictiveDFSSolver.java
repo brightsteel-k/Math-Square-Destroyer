@@ -1,48 +1,31 @@
 package com.mathsquare.solvers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.mathsquare.objects.Board;
 import com.mathsquare.solvers.Calculators.Calculator;
 import com.mathsquare.solvers.Calculators.IPredictiveCalculator;
 import com.mathsquare.solvers.Calculators.PredictiveDmasCalculator;
 import com.mathsquare.solvers.Calculators.PredictiveNaturalCalculator;
 import com.mathsquare.ui.DisplayBoard;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PredictiveDFSSolver extends DFSBacktrackSolver {
 
     protected IPredictiveCalculator predictiveCalculator;
 
-    public PredictiveDFSSolver(Board board, DisplayBoard displayBoard) {
-        super(board, displayBoard, false);
-    }
-
-    public PredictiveDFSSolver(Board board, DisplayBoard displayBoard, boolean useOrderOfOperations) {
-        super(board, displayBoard, useOrderOfOperations);
+    public PredictiveDFSSolver(DisplayBoard displayBoard, boolean useOrderOfOperations) {
+        super(displayBoard, useOrderOfOperations);
     }
     
+    public PredictiveDFSSolver(DisplayBoard displayBoard, boolean useOrderOfOperations, int ticksPerUpdate) {
+        super(displayBoard, useOrderOfOperations, ticksPerUpdate);
+    }
+
     @Override
     public Calculator initializeCalculator() {
         Calculator tempCalculator = useOrderOfOperations ? new PredictiveDmasCalculator(board) : new PredictiveNaturalCalculator(board);
         predictiveCalculator = (IPredictiveCalculator)tempCalculator;
         return tempCalculator;
-    }
-
-    @Override
-    public void beginSolving() {
-        super.beginSolving();
-
-        // Begin Depth-First Search
-        while (IS_SOLVING) {
-            if (solveBoardDepthFirst()) {
-                IS_SOLVING = false;
-                displayBoard.onSolved(boardNumbers);
-            } else if (++tick == ticksPerUpdate) {
-                displayBoard.updateNumbers(boardNumbers);
-                tick = 0;
-            }
-        }
     }
 
     @Override
@@ -68,7 +51,7 @@ public class PredictiveDFSSolver extends DFSBacktrackSolver {
             }
 
             // Solve next board, if there is one
-            if (boardsToTest.size() == 0) {
+            if (boardsToTest.isEmpty()) {
                 boardNumbers = new ArrayList<>();
                 return true;
             } else {

@@ -1,11 +1,11 @@
 package com.mathsquare.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.mathsquare.Operation;
 import com.mathsquare.exceptions.InvalidBoardPatternException;
 import com.mathsquare.objects.Board;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BoardPatternManager {
     
@@ -46,7 +46,7 @@ public class BoardPatternManager {
             throw new InvalidBoardPatternException("Board pattern width does not match width variable.");
         } else if (parsedRowTargets.size() != height) {
             throw new InvalidBoardPatternException("Board pattern row targets does not match up with height of board.");
-        } else if (parsedColumnOperations.size() != width) {
+        } else if (parsedColumnTargets.size() != width) {
             throw new InvalidBoardPatternException("Board pattern column targets does not match up with width of board.");
         }
 

@@ -9,7 +9,7 @@ import com.mathsquare.util.DataManager;
 import java.io.IOException;
 
 public class Main {
-    public static String BOARD_TO_SOLVE ="5x5.json";
+    public static String BOARD_TO_SOLVE ="4x4.json";
 
     public static void main(String[] args) {
         Board board = DataManager.deserializeBoard("math-square/mathsquare/data/" + BOARD_TO_SOLVE);
@@ -19,7 +19,18 @@ public class Main {
         solver.solveBoard();
     }
 
+    public static void testIterates(long bitset) {
+        while (bitset != 0) {
+            long t = bitset & -bitset;
+            int r = Long.numberOfTrailingZeros(bitset);
+            System.out.println(r + 1);
+            bitset ^= t;
+        }
+    }
+
+
     public static void TestSolver() {
+        Board board = DataManager.deserializeBoard("math-square/mathsquare/data/" + BOARD_TO_SOLVE);
         ConsoleBoard displayBoard = new ConsoleBoard();
         Solver solver = new PredictiveDFSSolver(displayBoard, false);
         BoardTester tester = new BoardTester(solver);

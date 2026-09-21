@@ -1,8 +1,8 @@
 package com.mathsquare.solvers.Calculators;
 
-import java.util.List;
-
 import com.mathsquare.objects.Board;
+
+import java.util.List;
 
 // Calculates rows and columns using order of operations, predicts whether unfinished
 // rows or columns are still possible given the remaining options.
@@ -23,18 +23,26 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
     }
     
     @Override
-    public void loadOptions(List<Byte> options, byte justPlaced) {
-        byte n = (byte)options.size();
+    public void loadOptions(long options, byte justPlaced) {
+        byte min = (byte)(Long.numberOfTrailingZeros(options) + 1);
+        byte max = (byte)(64 - Long.numberOfLeadingZeros(options));
+        int n = Long.bitCount(options);
         if (n < PredictAtNumOptions) {
             // Do not predict when there are too few options
             makePrediction = false;
         } else {
             // Get lower bound for remaining options
-            minOption = options.get(0) == justPlaced ? options.get(1) : options.get(0);
-    
+            if (min == justPlaced) {
+                long offOptions = options & ~((long)1 << (justPlaced - 1));
+                minOption = (byte)(Long.numberOfTrailingZeros(offOptions) + 1);
+            }
+
             // Get upper bound for remaining options
-            maxOption = options.get(n - 1) == justPlaced ? options.get(n - 2) : options.get(n - 1);
-    
+            if (max == justPlaced) {
+                long offOptions = options & ~((long)1 << (justPlaced - 1));
+                maxOption = (byte)(64 - Long.numberOfLeadingZeros(offOptions));
+            }
+
             // Bounds calculated, prediction can be made
             makePrediction = true;
         }

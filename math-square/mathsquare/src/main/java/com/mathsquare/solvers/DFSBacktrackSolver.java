@@ -39,20 +39,25 @@ public class DFSBacktrackSolver extends BacktrackSolver {
         } else {
             // Calculate new boards
             List<Byte> currentBoard;
-            for (int i = 0; i < options.size(); i++) {
-                currentBoard = new ArrayList<>(boardNumbers);
-                currentBoard.add(options.get(i));
 
+            // Iterate over all possible options (set bits)
+            long bitset = options;
+            while (bitset != 0) {
+                long t = bitset & -bitset;
+                byte opt = (byte)(Long.numberOfTrailingZeros(bitset) + 1);
+
+                currentBoard = new ArrayList<>(boardNumbers);
+                currentBoard.add(opt);
                 if (isBoardValid(currentBoard, currentBoard.size() - 1)) {
                     boardsToTest.addFirst(currentBoard);
-                    List<Byte> opts = new ArrayList<>(options);
-                    opts.remove(options.get(i));
-                    optionsToTest.addFirst(opts);
+                    optionsToTest.addFirst(options & ~((long)1 << (opt - 1)));
                 }
+
+                bitset ^= t;
             }
 
             // Solve next board, if there is one
-            if (boardsToTest.size() == 0) {
+            if (boardsToTest.isEmpty()) {
                 boardNumbers = new ArrayList<>();
                 return true;
             } else {

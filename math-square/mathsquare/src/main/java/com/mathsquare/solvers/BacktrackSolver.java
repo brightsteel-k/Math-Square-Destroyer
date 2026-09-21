@@ -17,8 +17,8 @@ public abstract class BacktrackSolver extends Solver {
 
     protected List<Byte> boardNumbers;
     protected LinkedList<List<Byte>> boardsToTest;
-    protected List<Byte> options;
-    protected LinkedList<List<Byte>> optionsToTest;
+    protected long options;
+    protected LinkedList<Long> optionsToTest;
     protected Calculator calculator;
 
     protected boolean useOrderOfOperations;
@@ -52,14 +52,10 @@ public abstract class BacktrackSolver extends Solver {
     @Override
     public List<Byte> solveBoard() {
         IS_SOLVING = true;
-        List<Byte> possibleNumbers = new ArrayList<>();
-        for (byte k = 1; k <= boardlength; k++) {
-            possibleNumbers.add(k);
-        }
 
         this.boardNumbers = new ArrayList<>();
         this.boardsToTest = new LinkedList<>();
-        this.options = possibleNumbers;
+        this.options = ((long)1 << boardlength) - 1;
         this.optionsToTest = new LinkedList<>();
         return new ArrayList<>();
     }

@@ -18,18 +18,27 @@ public class PredictiveNaturalCalculator extends NaturalCalculator implements IP
     }
 
     @Override
-    public void loadOptions(List<Byte> options, byte justPlaced) {
-        byte n = (byte)options.size();
+    public void loadOptions(long options, byte justPlaced) {
+        int n = Long.bitCount(options);
         if (n < PredictAtNumOptions) {
             // Do not predict when there are too few options
             makePrediction = false;
         } else {
+            minOption = (byte)(Long.numberOfTrailingZeros(options) + 1);
+            maxOption = (byte)(64 - Long.numberOfLeadingZeros(options));
+
             // Get lower bound for remaining options
-            minOption = options.get(0) == justPlaced ? options.get(1) : options.get(0);
-    
+            if (minOption == justPlaced) {
+                long offOptions = options & ~((long)1 << (justPlaced - 1));
+                minOption = (byte)(Long.numberOfTrailingZeros(offOptions) + 1);
+            }
+
             // Get upper bound for remaining options
-            maxOption = options.get(n - 1) == justPlaced ? options.get(n - 2) : options.get(n - 1);
-    
+            if (maxOption == justPlaced) {
+                long offOptions = options & ~((long)1 << (justPlaced - 1));
+                maxOption = (byte)(64 - Long.numberOfLeadingZeros(offOptions));
+            }
+
             // Bounds calculated, prediction can be made
             makePrediction = true;
         }

@@ -3,8 +3,6 @@ package com.mathsquare.solvers.Calculators;
 import com.mathsquare.Operation;
 import com.mathsquare.objects.Board;
 
-import java.util.List;
-
 // Calculates rows and columns using order of operations
 public class DmasCalculator extends Calculator {
 
@@ -22,10 +20,10 @@ public class DmasCalculator extends Calculator {
         operands = new float[Math.max(board.getWidth(), board.getHeight())];
     }
 
-    protected void processRowOperands(List<Byte> boardNumbers, byte y) {
+    protected void processRowOperands(byte[] boardNumbers, int y) {
         // Iterate over the row once to apply mul/div operators
-        byte chainhead = -1;
-        for (byte x = 0; x < board.getWidth(); x++) {
+        int chainhead = -1;
+        for (int x = 0; x < board.getWidth(); x++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
 
             // If this is the first operand, load it immediately
@@ -47,7 +45,7 @@ public class DmasCalculator extends Calculator {
                 case MUL:
                     // Mark current mul/div chain
                     if (chainhead < 0) {
-                        chainhead = prev(x);
+                        chainhead = x - 1;
                     }
 
                     // Consolidate result of mul operator to
@@ -59,7 +57,7 @@ public class DmasCalculator extends Calculator {
                 case DIV:
                     // Mark current mul/div chain
                     if (chainhead < 0) {
-                        chainhead = prev(x);
+                        chainhead = x - 1;
                     }
 
                     // Consolidate result of div operator to
@@ -71,7 +69,7 @@ public class DmasCalculator extends Calculator {
         }
     }
 
-    public boolean isRowValid(List<Byte> boardNumbers, byte y) {
+    public boolean isRowValid(byte[] boardNumbers, int y) {
         // Unfinished rows automatically pass validation 
         if (!isRowFinished(boardNumbers, y)) {
             return true;
@@ -82,7 +80,7 @@ public class DmasCalculator extends Calculator {
 
         // Iterate over the row a second time to apply add/sub operators
         float product = 0;
-        for (byte x = 0; x < board.getWidth(); x++) {
+        for (int x = 0; x < board.getWidth(); x++) {
             // If this is the first operand, load it immediately
             if (x == 0) {
                 product = operands[x];
@@ -109,10 +107,10 @@ public class DmasCalculator extends Calculator {
         return matches(product, board.getRowTarget(y));
     }
 
-    protected void processColumnOperands(List<Byte> boardNumbers, byte x) {
+    protected void processColumnOperands(byte[] boardNumbers, int x) {
         // Iterate over the column once to apply mul/div operators
-        byte chainhead = -1;
-        for (byte y = 0; y < board.getHeight(); y++) {
+        int chainhead = -1;
+        for (int y = 0; y < board.getHeight(); y++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
 
             // If this is the first operand, load it immediately
@@ -134,7 +132,7 @@ public class DmasCalculator extends Calculator {
                 case MUL:
                     // Mark current mul/div chain
                     if (chainhead < 0) {
-                        chainhead = prev(y);
+                        chainhead = y - 1;
                     }
 
                     // Consolidate result of mul operator to
@@ -146,7 +144,7 @@ public class DmasCalculator extends Calculator {
                 case DIV:
                     // Mark current mul/div chain
                     if (chainhead < 0) {
-                        chainhead = prev(y);
+                        chainhead = y - 1;
                     }
 
                     // Consolidate result of div operator to
@@ -158,7 +156,7 @@ public class DmasCalculator extends Calculator {
         }
     }
 
-    public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
+    public boolean isColumnValid(byte[] boardNumbers, int x) {
         // Unfinished columns automatically pass validation 
         if (!isColumnFinished(boardNumbers, x)) {
             return true;
@@ -169,7 +167,7 @@ public class DmasCalculator extends Calculator {
 
         // Iterate over the row a second time to apply add/sub operators
         float product = 0;
-        for (byte y = 0; y < board.getHeight(); y++) {
+        for (int y = 0; y < board.getHeight(); y++) {
             // If this is the first operand, load it immediately
             if (y == 0) {
                 product = operands[y];
@@ -197,13 +195,13 @@ public class DmasCalculator extends Calculator {
     }
 
     @Override
-    public int calculateLine(List<Byte> lineNumbers, Operation[] operations) {
-        operands = new float[lineNumbers.size()];
+    public int calculateLine(byte[] lineNumbers, Operation[] operations) {
+        operands = new float[lineNumbers.length];
 
         // Iterate over the column once to apply mul/div operators
-        byte chainhead = -1;
-        for (byte i = 0; i < lineNumbers.size(); i++) {
-            float nextNum = lineNumbers.get(i);
+        int chainhead = -1;
+        for (int i = 0; i < lineNumbers.length; i++) {
+            float nextNum = lineNumbers[i];
 
             // If this is the first operand, load it immediately
             if (i == 0) {
@@ -224,7 +222,7 @@ public class DmasCalculator extends Calculator {
                 case MUL:
                     // Mark current mul/div chain
                     if (chainhead < 0) {
-                        chainhead = prev(i);
+                        chainhead = i - 1;
                     }
 
                     // Consolidate result of mul operator to
@@ -236,7 +234,7 @@ public class DmasCalculator extends Calculator {
                 case DIV:
                     // Mark current mul/div chain
                     if (chainhead < 0) {
-                        chainhead = prev(i);
+                        chainhead = i - 1;
                     }
 
                     // Consolidate result of div operator to
@@ -249,7 +247,7 @@ public class DmasCalculator extends Calculator {
 
         // Iterate over the row a second time to apply add/sub operators
         float product = 0;
-        for (byte i = 0; i < lineNumbers.size(); i++) {
+        for (int i = 0; i < lineNumbers.length; i++) {
             // If this is the first operand, load it immediately
             if (i == 0) {
                 product = operands[i];

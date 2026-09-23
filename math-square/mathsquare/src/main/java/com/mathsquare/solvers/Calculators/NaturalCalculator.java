@@ -3,8 +3,6 @@ package com.mathsquare.solvers.Calculators;
 import com.mathsquare.Operation;
 import com.mathsquare.objects.Board;
 
-import java.util.List;
-
 // Calculates rows and columns in the order the operations appear (NO order of operations)
 public class NaturalCalculator extends Calculator {
 
@@ -16,15 +14,15 @@ public class NaturalCalculator extends Calculator {
         super(boardIn);
     }
     
-    public boolean isRowValid(List<Byte> boardNumbers, byte y) {
+    public boolean isRowValid(byte[] boardNumbers, int y) {
         // Unfinished rows automatically pass validation 
         if (!isRowFinished(boardNumbers, y)) {
-            return true;
+            return isUnfinishedRowValid(boardNumbers, y);
         }
 
         // Calculate current product for row
         float product = 0;
-        for (byte x = 0; x < board.getWidth(); x++) {
+        for (int x = 0; x < board.getWidth(); x++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
 
             // If this is the first operand, initialize product
@@ -54,15 +52,15 @@ public class NaturalCalculator extends Calculator {
         return matches(product, board.getRowTarget(y));
     }
 
-    public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
+    public boolean isColumnValid(byte[] boardNumbers, int x) {
         // Unfinished columns automatically pass validation
         if (!isColumnFinished(boardNumbers, x)) {
-            return true;
+            return isUnfinishedColumnValid(boardNumbers, x);
         }
 
         // Calculate current product for column
         float product = 0;
-        for (byte y = 0; y < board.getHeight(); y++) {
+        for (int y = 0; y < board.getHeight(); y++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
 
             // If this is the first operand, initialize product
@@ -93,11 +91,11 @@ public class NaturalCalculator extends Calculator {
     }
 
     @Override
-    public int calculateLine(List<Byte> lineNumbers, Operation[] operations) {
+    public int calculateLine(byte[] lineNumbers, Operation[] operations) {
         // Calculate current product for line
-        float product = lineNumbers.get(0);
-        for (byte i = 1; i < lineNumbers.size(); i++) {
-            float nextNum = lineNumbers.get(i);
+        float product = lineNumbers[0];
+        for (byte i = 1; i < lineNumbers.length; i++) {
+            float nextNum = lineNumbers[i];
 
             // Otherwise, apply the appropriate operator with the next number
             switch (operations[i - 1]) {

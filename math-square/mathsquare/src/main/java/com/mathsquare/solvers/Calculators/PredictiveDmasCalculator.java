@@ -2,8 +2,6 @@ package com.mathsquare.solvers.Calculators;
 
 import com.mathsquare.objects.Board;
 
-import java.util.List;
-
 // Calculates rows and columns using order of operations, predicts whether unfinished
 // rows or columns are still possible given the remaining options.
 public class PredictiveDmasCalculator extends DmasCalculator implements IPredictiveCalculator {
@@ -23,7 +21,7 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
     }
     
     @Override
-    public void loadOptions(long options, byte justPlaced) {
+    public void loadOptions(long options, int justPlaced) {
         byte min = (byte)(Long.numberOfTrailingZeros(options) + 1);
         byte max = (byte)(64 - Long.numberOfLeadingZeros(options));
         int n = Long.bitCount(options);
@@ -48,23 +46,23 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
         }
     }
 
-    public boolean isRowValid(List<Byte> boardNumbers, byte y) {
-        // If row is complete, compute product as usual
-        if (!makePrediction || isRowFinished(boardNumbers, y)) {
-            return super.isRowValid(boardNumbers, y);
+    public boolean isUnfinishedRowValid(byte[] boardNumbers, int y) {
+        // If not enough numbers, skip prediction
+        if (!makePrediction) {
+            return true;
         }
 
         // Predictive validation
 
         // Iterate over the row once to apply mul/div operators
-        byte chainhead = -1;
-        for (byte x = 0; x < board.getWidth(); x++) {
+        int chainhead = -1;
+        for (int x = 0; x < board.getWidth(); x++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
 
             // If this is the first operand, load it immediately
             if (x == 0) {
-                lowerBoundOperands[x] = nextNum == -1 ? minOption : nextNum;
-                upperBoundOperands[x] = nextNum == -1 ? maxOption : nextNum;
+                lowerBoundOperands[x] = nextNum == 0 ? minOption : nextNum;
+                upperBoundOperands[x] = nextNum == 0 ? maxOption : nextNum;
                 continue;
             }
 
@@ -72,16 +70,16 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
             switch (board.getOperationRows()[y][x-1]) {
                 case ADD:
                     // Load numbers normally for add and sub
-                    lowerBoundOperands[x] = nextNum == -1 ? minOption : nextNum;
-                    upperBoundOperands[x] = nextNum == -1 ? maxOption : nextNum;
+                    lowerBoundOperands[x] = nextNum == 0 ? minOption : nextNum;
+                    upperBoundOperands[x] = nextNum == 0 ? maxOption : nextNum;
                     
                     // Indicate no mul/div chain
                     chainhead = -1;
                     break;
                 case SUB:
                     // Load numbers normally for add and sub
-                    lowerBoundOperands[x] = (nextNum == -1 ? maxOption : nextNum) * -1;
-                    upperBoundOperands[x] = (nextNum == -1 ? minOption : nextNum) * -1;
+                    lowerBoundOperands[x] = (nextNum == 0 ? maxOption : nextNum) * -1;
+                    upperBoundOperands[x] = (nextNum == 0 ? minOption : nextNum) * -1;
                     
                     // Indicate no mul/div chain
                     chainhead = -1;
@@ -89,12 +87,12 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
                 case MUL:
                     // Mark current mul/div chain    
                     if (chainhead < 0) {
-                        chainhead = prev(x);
+                        chainhead = x - 1;
                     }
 
                     // Consolidate result of mul operator to
                     // the first term in the chain
-                    if (nextNum == -1) {
+                    if (nextNum == 0) {
                         lowerBoundOperands[chainhead] *= lowerBoundOperands[chainhead] > 0 ? minOption : maxOption;
                         upperBoundOperands[chainhead] *= upperBoundOperands[chainhead] > 0 ? maxOption : minOption;
                     } else {
@@ -107,12 +105,12 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
                 case DIV:
                     // Mark current mul/div chain    
                     if (chainhead < 0) {
-                        chainhead = prev(x);
+                        chainhead = x - 1;
                     }
 
                     // Consolidate result of div operator to
                     // the first term in the chain
-                    if (nextNum == -1) {
+                    if (nextNum == 0) {
                         lowerBoundOperands[chainhead] /= lowerBoundOperands[chainhead] > 0 ? maxOption : minOption;
                         upperBoundOperands[chainhead] /= upperBoundOperands[chainhead] > 0 ? minOption : maxOption;
                     } else {
@@ -129,7 +127,7 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
         float lowerBound = 0;
         float upperBound = 0;
         int rowTarget = board.getRowTarget(y);
-        for (byte x = 0; x < board.getWidth(); x++) {
+        for (int x = 0; x < board.getWidth(); x++) {
             // If this is the first operand, load it immediately
             if (x == 0) {
                 lowerBound = lowerBoundOperands[x];
@@ -158,23 +156,23 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
         return Math.round(lowerBound) <= rowTarget && Math.round(upperBound) >= rowTarget;
     }
 
-    public boolean isColumnValid(List<Byte> boardNumbers, byte x) {
-        // If column is complete, compute product as usual
-        if (!makePrediction || isColumnFinished(boardNumbers, x)) {
-            return super.isColumnValid(boardNumbers, x);
+    public boolean isUnfinishedColumnValid(byte[] boardNumbers, int x) {
+        // If not enough numbers, skip prediction
+        if (!makePrediction) {
+            return true;
         }
 
         // Predictive validation
 
         // Iterate over the column once to apply mul/div operators
-        byte chainhead = -1;
-        for (byte y = 0; y < board.getHeight(); y++) {
+        int chainhead = -1;
+        for (int y = 0; y < board.getHeight(); y++) {
             float nextNum = getBoardNumber(boardNumbers, x, y);
 
             // If this is the first operand, load it immediately
             if (y == 0) {
-                lowerBoundOperands[y] = nextNum == -1 ? minOption : nextNum;
-                upperBoundOperands[y] = nextNum == -1 ? maxOption : nextNum;
+                lowerBoundOperands[y] = nextNum == 0 ? minOption : nextNum;
+                upperBoundOperands[y] = nextNum == 0 ? maxOption : nextNum;
                 continue;
             }
 
@@ -182,16 +180,16 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
             switch (board.getOperationColumns()[x][y-1]) {
                 case ADD:
                     // Load numbers normally for add
-                    lowerBoundOperands[y] = nextNum == -1 ? minOption : nextNum;
-                    upperBoundOperands[y] = nextNum == -1 ? maxOption : nextNum;
+                    lowerBoundOperands[y] = nextNum == 0 ? minOption : nextNum;
+                    upperBoundOperands[y] = nextNum == 0 ? maxOption : nextNum;
                     
                     // Indicate no mul/div chain
                     chainhead = -1;
                     break;
                 case SUB:
                     // Load negataive numbers for sub
-                    lowerBoundOperands[y] = (nextNum == -1 ? maxOption : nextNum) * -1;
-                    upperBoundOperands[y] = (nextNum == -1 ? minOption : nextNum) * -1;
+                    lowerBoundOperands[y] = (nextNum == 0 ? maxOption : nextNum) * -1;
+                    upperBoundOperands[y] = (nextNum == 0 ? minOption : nextNum) * -1;
                     
                     // Indicate no mul/div chain
                     chainhead = -1;
@@ -199,12 +197,12 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
                 case MUL:
                     // Mark current mul/div chain    
                     if (chainhead < 0) {
-                        chainhead = prev(y);
+                        chainhead = y - 1;
                     }
 
                     // Consolidate result of mul operator to
                     // the first term in the chain
-                    if (nextNum == -1) {
+                    if (nextNum == 0) {
                         lowerBoundOperands[chainhead] *= lowerBoundOperands[chainhead] > 0 ? minOption : maxOption;
                         upperBoundOperands[chainhead] *= upperBoundOperands[chainhead] > 0 ? maxOption : minOption;
                     } else {
@@ -217,12 +215,12 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
                 case DIV:
                     // Mark current mul/div chain    
                     if (chainhead < 0) {
-                        chainhead = prev(y);
+                        chainhead = y - 1;
                     }
 
                     // Consolidate result of div operator to
                     // the first term in the chain
-                    if (nextNum == -1) {
+                    if (nextNum == 0) {
                         lowerBoundOperands[chainhead] /= lowerBoundOperands[chainhead] > 0 ? maxOption : minOption;
                         upperBoundOperands[chainhead] /= upperBoundOperands[chainhead] > 0 ? minOption : maxOption;
                     } else {
@@ -239,7 +237,7 @@ public class PredictiveDmasCalculator extends DmasCalculator implements IPredict
         float lowerBound = 0;
         float upperBound = 0;
         int columnTarget = board.getColumnTarget(x);
-        for (byte y = 0; y < board.getHeight(); y++) {
+        for (int y = 0; y < board.getHeight(); y++) {
             // If this is the first operand, load it immediately
             if (y == 0) {
                 lowerBound = lowerBoundOperands[y];

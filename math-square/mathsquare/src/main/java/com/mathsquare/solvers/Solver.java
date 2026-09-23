@@ -5,14 +5,12 @@ import com.mathsquare.objects.Board;
 import com.mathsquare.solvers.Calculators.Calculator;
 import com.mathsquare.ui.DisplayBoard;
 
-import java.util.List;
-
 public abstract class Solver {
     public static boolean IS_SOLVING = false;
 
-    protected byte width;
-    protected byte height;
-    protected byte boardlength;
+    protected int width;
+    protected int height;
+    protected int boardlength;
     protected Operation[][] operationRows;
     protected Operation[][] operationColumns;
     protected int[] targetRows;
@@ -36,9 +34,9 @@ public abstract class Solver {
         this.board = board;
     }
 
-    public abstract List<Byte> solveBoard();
+    public abstract byte[] solveBoard();
 
-    public abstract List<Byte> getBoardNumbers();
+    public abstract byte[] getBoardNumbers();
 
     public DisplayBoard getDisplayBoard() { return displayBoard; }
     public abstract Calculator getCalculator();

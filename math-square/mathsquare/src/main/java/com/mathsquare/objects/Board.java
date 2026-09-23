@@ -10,9 +10,9 @@ public class Board {
     public static Board EMPTY_BOARD = new Board();
 
     @Expose
-    private byte width;
+    private int width;
     @Expose
-    private byte height;
+    private int height;
     @Expose
     private String[] pattern;
     private Operation[][] operationRows = new Operation[][] { };
@@ -20,13 +20,17 @@ public class Board {
     private int[] targetRows = new int[] { };
     private int[] targetColumns = new int[] { };
 
+    // For testing purposes
+    @Expose
+    private byte[] solution = new byte[0];
+
     public Board() {
         
     }
 
     public Board(int width, int height, Operation[][] operationRows, Operation[][] operationColumns, int[] targetRows, int[] targetColumns) {
-        this.width = (byte)width;
-        this.height = (byte)height;
+        this.width = width;
+        this.height = height;
         this.operationRows = operationRows;
         this.operationColumns = operationColumns;
         this.targetRows = targetRows;
@@ -49,11 +53,11 @@ public class Board {
         return pattern;
     }
 
-    public byte getWidth() {
+    public int getWidth() {
         return width;
     }
     
-    public byte getHeight() {
+    public int getHeight() {
         return height;
     }
 
@@ -69,7 +73,7 @@ public class Board {
         return targetRows;
     }
 
-    public int getRowTarget(byte row) {
+    public int getRowTarget(int row) {
         return targetRows[row];
     }
 
@@ -77,13 +81,16 @@ public class Board {
         return targetColumns;
     }
 
-    public int getColumnTarget(byte column) {
+    public int getColumnTarget(int column) {
         return targetColumns[column];
     }
 
     public int getBoardLength() {
         return width * height;
     }
+    public boolean hasSolution() { return solution.length > 0; }
+    public byte[] getSolution() { return solution; }
+    public void setSolution(byte[] solutionIn) { solution = solutionIn; }
 
     public static boolean isValidPattern(String[] pattern) {
         return pattern.length > 0 && pattern[0].startsWith("#");

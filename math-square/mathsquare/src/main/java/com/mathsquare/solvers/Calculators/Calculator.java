@@ -3,8 +3,6 @@ package com.mathsquare.solvers.Calculators;
 import com.mathsquare.Operation;
 import com.mathsquare.objects.Board;
 
-import java.util.List;
-
 public abstract class Calculator {
 
     protected static final byte ZERO = (byte)0;
@@ -19,9 +17,17 @@ public abstract class Calculator {
 
     public void loadBoard(Board boardIn) { board = boardIn; }
 
-    public abstract boolean isRowValid(List<Byte> boardNumbers, byte y);
+    public abstract boolean isRowValid(byte[] boardNumbers, int y);
 
-    public abstract boolean isColumnValid(List<Byte> boardNumbers, byte x);
+    public abstract boolean isColumnValid(byte[] boardNumbers, int x);
+
+    protected boolean isUnfinishedRowValid(byte[] boardNumbers, int y) {
+        return true;
+    }
+
+    protected boolean isUnfinishedColumnValid(byte[] boardNumbers, int x) {
+        return true;
+    }
 
     /**
      * Calculates the result of an equation given by n lineNumbers separated by n - 1 operations.
@@ -29,7 +35,7 @@ public abstract class Calculator {
      * @param operations The operations between each number. Should be one fewer than the numbers.
      * @return the result of the equation, or Integer.MIN_VALUE if the result is not a clean integer.
      */
-    public abstract int calculateLine(List<Byte> lineNumbers, Operation[] operations);
+    public abstract int calculateLine(byte[] lineNumbers, Operation[] operations);
 
     /**
      * Checks whether the change to slot n on the board makes the board invalid.
@@ -37,12 +43,12 @@ public abstract class Calculator {
      * @param n Slot changed.
      * @return true if the board is valid, false otherwise.
      */
-    public boolean isBoardChangeValid(List<Byte> boardNumbers, byte n) {
+    public boolean isBoardChangeValid(byte[] boardNumbers, int n) {
         int row = n / board.getWidth();
         int column = n % board.getWidth();
 
         // Check row and column
-        return isRowValid(boardNumbers, (byte)row) && isColumnValid(boardNumbers, (byte)column);
+        return isRowValid(boardNumbers, row) && isColumnValid(boardNumbers, column);
     }
 
     /**
@@ -51,9 +57,13 @@ public abstract class Calculator {
      * @param y Row.
      * @return true iff the final spot in the row has been filled.
      */
-    protected boolean isRowFinished(List<Byte> boardNumbers, byte y) {
-        int lastIndex = (y + 1) * board.getWidth() - 1;
-        return lastIndex < boardNumbers.size();
+    protected boolean isRowFinished(byte[] boardNumbers, int y) {
+        for (int x = 0; x < board.getWidth(); x++) {
+            if (getBoardNumber(boardNumbers, x, y) == 0) {
+                return false;
+            }
+        }
+        return true;
     }
     
     /**
@@ -62,37 +72,27 @@ public abstract class Calculator {
      * @param x Column.
      * @return true iff the final spot in the column has been filled.
      */
-    protected boolean isColumnFinished(List<Byte> boardNumbers, byte x) {
-        int lastIndex = board.getBoardLength() - board.getWidth() + x;
-        return lastIndex < boardNumbers.size();
+    protected boolean isColumnFinished(byte[] boardNumbers, int x) {
+        for (int y = 0; y < board.getHeight(); y++) {
+            if (getBoardNumber(boardNumbers, x, y) == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * Returns the number at a particular column and row in the given board numbers, or
-     * -1 if the position has not been populated yet.
+     * 0 if the position has not been populated yet.
      * @param boardNumbers Current board numbers.
      * @param x Column.
      * @param y Row.
      * @return The number on the board. Valid values are limited to range [0,boardlength],
      *          which must be a byte.
      */
-    protected byte getBoardNumber(List<Byte> boardNumbers, byte x, byte y) {
+    protected byte getBoardNumber(byte[] boardNumbers, int x, int y) {
         int index = x + (y * board.getWidth());
-        if (index < boardNumbers.size()) {
-            return boardNumbers.get(index);
-        }
-
-        // Signal no number exists there yet
-        return -1;
-    }
-
-    /**
-     * Returns the index immediately before the given index.
-     * @param x The given index.
-     * @return x - 1.
-     */
-    protected byte prev(byte x) {
-        return (byte)(x - 1);
+        return boardNumbers[index + 1];
     }
 
     /**

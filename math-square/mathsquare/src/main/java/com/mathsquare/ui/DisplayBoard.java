@@ -2,8 +2,6 @@ package com.mathsquare.ui;
 
 import com.mathsquare.objects.Board;
 
-import java.util.List;
-
 public abstract class DisplayBoard {
 
     protected Board board;
@@ -18,7 +16,7 @@ public abstract class DisplayBoard {
         return this.board;
     }
 
-    public abstract void onSolved(List<Byte> solution);
+    public abstract void onSolved(byte[] solution);
 
-    public abstract void updateNumbers(List<Byte> numbers);
+    public abstract void updateNumbers(byte[] numbers);
 }

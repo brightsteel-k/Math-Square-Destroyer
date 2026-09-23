@@ -3,7 +3,7 @@ package com.mathsquare.ui;
 import com.mathsquare.objects.Board;
 import com.mathsquare.util.Timer;
 
-import java.util.List;
+import java.util.Arrays;
 
 
 public class ConsoleBoard extends DisplayBoard {
@@ -22,14 +22,14 @@ public class ConsoleBoard extends DisplayBoard {
     }
 
     @Override
-    public void onSolved(List<Byte> solution) {
+    public void onSolved(byte[] solution) {
         duration = timer.stopTimer();
         System.out.println(getSolutionDisplay(solution));
     }
 
-    public String getSolutionDisplay(List<Byte> solution) {
+    public String getSolutionDisplay(byte[] solution) {
         StringBuilder displayString = new StringBuilder();
-        if (!solution.isEmpty()) {
+        if (solution.length > 0) {
             displayString.append("SOLUTION FOUND: \n");
             String[] pattern = board.getPattern();
 
@@ -37,7 +37,7 @@ public class ConsoleBoard extends DisplayBoard {
             int digits = (int)Math.log10(board.getBoardLength());
             for (int i = 0; i < pattern.length; i++) {
                 if (i % 2 == 0 && i < pattern.length - 1) {
-                    displayString.append(formatSolvedNumberRow(pattern[i], solution.subList(i / 2 * width, (i / 2 + 1) * width), digits));
+                    displayString.append(formatSolvedNumberRow(pattern[i], Arrays.copyOfRange(solution, i / 2 * width, (i / 2 + 1) * width), digits));
                     displayString.append("\n");
                 } else if (i == pattern.length - 1) {
                     displayString.append(formatTargetsRow(pattern[i], digits));
@@ -58,13 +58,13 @@ public class ConsoleBoard extends DisplayBoard {
         return displayString.toString();
     }
 
-    private static String formatSolvedNumberRow(String row, List<Byte> rowNumbers, int digits) {
+    private static String formatSolvedNumberRow(String row, byte[] rowNumbers, int digits) {
         StringBuilder newRow = new StringBuilder(row);
         int index = newRow.indexOf("#");
         int i = 0;
         while (index > -1) {
-            Byte x = rowNumbers.get(i++);
-            newRow.replace(index, index + 1, x.toString());
+            byte x = rowNumbers[i++];
+            newRow.replace(index, index + 1, Byte.toString(x));
             for (int xDigits = (int)Math.log10(x); xDigits < digits; xDigits++) {
                 newRow.insert(index + 1, " ");
             }
@@ -123,11 +123,11 @@ public class ConsoleBoard extends DisplayBoard {
     }
 
     @Override
-    public void updateNumbers(List<Byte> numbers) {
+    public void updateNumbers(byte[] numbers) {
         StringBuilder update = new StringBuilder("CHECKING NUMBERS: [ ");
-        for (int i = 0; i < numbers.size(); i++) {
-            update.append(numbers.get(i));
-            if (i < numbers.size() - 1) {
+        for (int i = 0; i < numbers.length; i++) {
+            update.append(numbers[i]);
+            if (i < numbers.length - 1) {
                 update.append(", ");
             } else {
                 update.append(" ]");

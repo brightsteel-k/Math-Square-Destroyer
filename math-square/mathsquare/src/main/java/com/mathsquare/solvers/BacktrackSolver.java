@@ -90,6 +90,7 @@ public abstract class BacktrackSolver extends Solver {
 
                 int nextIdx = getNextSlotIdx();
                 currentBoard = addOptionToBoard(opt, nextIdx);
+
                 if (isBoardValid(currentBoard, nextIdx)) {
                     saveBoardAndOptions(currentBoard, options & ~((long)1 << (opt - 1)));
                 }
@@ -127,7 +128,7 @@ public abstract class BacktrackSolver extends Solver {
     }
 
     protected boolean isBoardValid(byte[] boardNumbers, int n) {
-        if (n < width - 1) {
+        if (boardNumbers[0] < width - 1) {
             return true;
         }
 

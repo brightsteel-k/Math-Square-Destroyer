@@ -42,6 +42,36 @@ public class PredictiveNaturalCalculator extends NaturalCalculator implements IP
         }
     }
 
+    /*@Override
+    public boolean isBoardChangeValid(byte[] boardNumbers, int n) {
+        // If the change is not valid on the affected line/column, reject
+        if (!super.isBoardChangeValid(boardNumbers, n)) {
+            return false;
+        }
+
+        // If the change is valid on the affected line/column and does not
+        // include a previous highest or lowest option, continue as normal
+        if (boardNumbers[n+1] <= maxOption && boardNumbers[n+1] >= minOption) {
+            return true;
+        }
+
+        // Double-check the other rows and columns now that a largest or smallest
+        // option was just used
+        int row = n / board.getWidth();
+        int column = n % board.getWidth();
+        for (int x = 0; x != column && x < board.getWidth(); x++) {
+            if (!isColumnValid(boardNumbers, x)) {
+                return false;
+            }
+        }
+        for (int y = 0; y != row && y < board.getHeight(); y++) {
+            if (!isRowValid(boardNumbers, y)) {
+                return false;
+            }
+        }
+        return true;
+    }*/
+
     public boolean isUnfinishedRowValid(byte[] boardNumbers, int y) {
         // If not enough numbers, skip prediction
         if (!makePrediction) {

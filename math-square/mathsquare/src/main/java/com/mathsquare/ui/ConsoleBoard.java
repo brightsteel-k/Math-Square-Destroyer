@@ -83,7 +83,7 @@ public class ConsoleBoard extends DisplayBoard {
             char c = row.charAt(i);
             newRow.append(c);
             if (c != ' ') {
-                addSpaces(newRow, extraSpaces);
+                newRow.append(" ".repeat(extraSpaces));
             }
         }
         return newRow.toString();
@@ -101,7 +101,7 @@ public class ConsoleBoard extends DisplayBoard {
             newRow.append(c);
             if (c == ' ') {
                 if (trailing) {
-                    addSpaces(newRow, extraSpaces);
+                    newRow.append(" ".repeat(extraSpaces));
                     trailing = false;
                 }
             } else if (!trailing) {
@@ -111,12 +111,6 @@ public class ConsoleBoard extends DisplayBoard {
         return newRow.toString();
     }
 
-    private static void addSpaces(StringBuilder string, int count) {
-        for (int s = 0; s < count; s++) {
-            string.append(" ");
-        }
-    }
-
     private static String printTime(long duration) {
         String commonTime = duration > 120000l ? String.format("%.2f min", (float)duration / 60000f) : String.format("%.2f sec", (float)duration / 1000f);
         return "TIME: " + duration + " ms / " + commonTime;
@@ -124,15 +118,20 @@ public class ConsoleBoard extends DisplayBoard {
 
     @Override
     public void updateNumbers(byte[] numbers) {
-        StringBuilder update = new StringBuilder("CHECKING NUMBERS: [ ");
-        for (int i = 0; i < numbers.length; i++) {
+        StringBuilder update = new StringBuilder("CHECKING NUMBERS: \n");
+        for (int i = 1; i < numbers.length; i++) {
             update.append(numbers[i]);
-            if (i < numbers.length - 1) {
-                update.append(", ");
+            if ((i+1) % board.getWidth() == 0) {
+                update.append(",\n");
             } else {
-                update.append(" ]");
+                update.append(", ");
             }
         }
-        System.out.println(update.toString());
+        update.append("[First entry: ");
+        update.append(numbers[progressTrackerIndex + 1]);
+        update.append(" | Entries Filled: ");
+        update.append(numbers[0]);
+        update.append("]");
+        System.out.println(update);
     }
 }

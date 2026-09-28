@@ -13,15 +13,41 @@ import java.util.Collections;
 import java.util.List;
 
 public class Main {
-    public static String BOARD_TO_SOLVE ="4x4-hard.json";
+    public static String BOARD_TO_SOLVE ="6x6.json";
 
     public static void main(String[] args) {
         TestSolver(true);
-        /*Board board = DataManager.deserializeBoard("math-square/mathsquare/data/" + BOARD_TO_SOLVE);
-        ConsoleBoard displayBoard = new ConsoleBoard();
-        Solver solver = new SelectiveDFSSolver(displayBoard, false, 100000000);
-        solver.loadBoard(board);
-        solver.solveBoard();*/
+        /*int count = 0;
+        int size = 25;
+
+        Board board = DataManager.deserializeBoard("math-square/mathsquare/data/" + BOARD_TO_SOLVE);
+        Calculator calc = new NaturalCalculator(board); // calc is short for calculator
+        Operation[] line = board.getOperationRows()[3];
+
+        Timer timer = new Timer();
+        timer.startTimer();
+        for (byte a = 0; a < size; a++) {
+            for (byte b = 0; b < size; b++) {
+                if (a == b) { continue;}
+                for (byte c = 0; c < size; c++) {
+                    if (a == c || b == c) { continue;}
+                    for (byte d = 0; d < size; d++) {
+                        if (a == d || b == d || c == d) { continue;}
+                        for (byte e = 0; e < size; e++) {
+                            if (a == e || b == e || c == e || d == e) { continue;}
+                            // if (calc.calculateLine(new byte[]{a, b, c, d, e}, line) == 20) {
+                            if (a - b - c + d + e == 20) {
+                                count++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        long time = timer.stopTimer();
+        System.out.println("Number of solutions: " + count);
+        System.out.println(Timer.printTime(time));*/
     }
 
 
@@ -71,12 +97,20 @@ public class Main {
     public static void TestSolver(boolean useBoard) {
         Board board = DataManager.deserializeBoard("math-square/mathsquare/data/" + BOARD_TO_SOLVE);
         ConsoleBoard displayBoard = new ConsoleBoard();
-        Solver solver = new SelectiveDFSSolver(displayBoard, false);
+        Solver solver = new SelectiveDFSSolver(displayBoard, false, 100000000);
         BoardTester tester = new BoardTester(solver);
         if (useBoard) {
             tester.loadBoard(board);
         }
         tester.runSolverTests(4, 4, useBoard ? 1 : 10, !useBoard);
+    }
+
+    public static void RunSolver() {
+        Board board = DataManager.deserializeBoard("math-square/mathsquare/data/" + BOARD_TO_SOLVE);
+        ConsoleBoard displayBoard = new ConsoleBoard();
+        Solver solver = new SelectiveDFSSolver(displayBoard, false, 100000000);
+        solver.loadBoard(board);
+        solver.solveBoard();
     }
 
 

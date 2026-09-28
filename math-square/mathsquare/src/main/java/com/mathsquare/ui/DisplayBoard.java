@@ -5,6 +5,7 @@ import com.mathsquare.objects.Board;
 public abstract class DisplayBoard {
 
     protected Board board;
+    protected int progressTrackerIndex = 0;
 
     public DisplayBoard() {}
 
@@ -19,4 +20,8 @@ public abstract class DisplayBoard {
     public abstract void onSolved(byte[] solution);
 
     public abstract void updateNumbers(byte[] numbers);
+
+    public void setProgressTrackerIndex(int index) {
+        progressTrackerIndex = index;
+    }
 }
